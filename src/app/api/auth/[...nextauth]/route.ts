@@ -24,8 +24,6 @@ const nextAuthOptions: NextAuthOptions = {
             data: { user },
           } = response
 
-          console.log(user)
-
           if (user) {
             return user
           }
@@ -52,13 +50,13 @@ const nextAuthOptions: NextAuthOptions = {
       }
 
       if (Date.now() < customToken.accessTokenExpires) {
+        console.log('veio aqui')
         return token
       }
 
       return refreshAccessToken(token)
     },
     async session({ session, token }) {
-      console.log(session, 'asdjaslkj', token)
       session.accessToken = token.accessToken as any
       session.error = token.error as any
       return session
