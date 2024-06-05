@@ -1,5 +1,6 @@
 'use client'
 
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { SyntheticEvent, useRef } from 'react'
 
@@ -9,16 +10,21 @@ export default function Home() {
 
   const router = useRouter()
 
-  function handleSubmit(event: SyntheticEvent) {
+  async function handleSubmit(event: SyntheticEvent) {
     event.preventDefault()
 
-    console.log(email.current?.value, password.current?.value)
+    const response = await signIn('credentials', {
+      redirect: false,
+      email: email.current?.value,
+      password: password.current?.value,
+    })
 
-    if (email.current?.value && password.current?.value) {
-      router.replace('/dashboard')
-    } else {
-      alert('Inputs is empty')
+    if (response?.error) {
+      console.log(response)
+      return
     }
+
+    router.replace('/dashboard')
   }
 
   return (
