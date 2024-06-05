@@ -7,7 +7,6 @@ export default function Dashboard() {
   const axiosAuth = useAxiosAuth()
 
   async function getProfile() {
-    console.log(session)
     const response = await axiosAuth.get('/me')
 
     console.log(response?.data, 'sdhfjksdh')

@@ -17,7 +17,10 @@ export const useRefreshToken = () => {
       },
     )
 
-    if (session) session.user.token = res.data.token
+    if (session) {
+      session.user.token = res.data.user.token
+      session.user.refreshToken = res.data.user.refreshToken
+    }
   }
 
   return refreshToken
