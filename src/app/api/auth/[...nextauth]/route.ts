@@ -41,58 +41,17 @@ const nextAuthOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      const customToken = token as unknown as any
-      if (user) {
-        const customUser = user as any
-        token.accessToken = customUser.token
-        token.refreshToken = customUser.refreshToken
-        token.accessTokenExpires = Date.now() + 20 * 1000
-      }
+      user && (token.user = user)
 
-      if (Date.now() < customToken.accessTokenExpires) {
-        console.log('veio aqui')
-        return token
-      }
-
-      return refreshAccessToken(token)
+      return { ...token, ...user }
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as any
-      session.error = token.error as any
+      session.user = token.user as any
+
       return session
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-}
-
-async function refreshAccessToken(token: any) {
-  try {
-    const res = await axios.post(
-      'http://localhost:3333/token/refresh',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token.refreshToken}`,
-        },
-      },
-    )
-
-    const refreshedTokens = res.data
-
-    return {
-      ...token,
-      accessToken: refreshedTokens.token,
-      accessTokenExpires: Date.now() + refreshedTokens.expiresIn * 1000,
-      refreshToken: refreshedTokens.refreshToken || token.refreshToken,
-    }
-  } catch (error) {
-    console.error('Error refreshing access token:', error)
-
-    return {
-      ...token,
-      error: 'RefreshAccessTokenError',
-    }
-  }
 }
 
 const handler = NextAuth(nextAuthOptions)

@@ -4,12 +4,11 @@ import NextAuth from 'next-auth'
 
 declare module 'next-auth' {
   interface Session {
-    accessToken: string
-    error: any
     user: {
       name: string
       email: string
-      accessToken: string
+      token: string
+      refreshToken: string
     }
   }
 }
